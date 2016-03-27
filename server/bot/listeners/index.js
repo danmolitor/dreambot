@@ -1,12 +1,11 @@
 // This file pulls each .js file from this directory (`listeners/`), then creates
 // and exports a single object containing the modules that the files exported
 
-var glob = require('glob');
+import glob from 'glob';
 
-module.exports = glob.sync('*.js', { ignore: 'index.js', cwd: __dirname })
+export default glob.sync('*.js', { ignore: 'index.js', cwd: __dirname })
   .reduce((obj, file) => {
     file = file.replace('.js', '');
-    obj[file] = require(`./${file}`);
+    obj[file] = require(`./${file}`).default;
     return obj;
   }, {});
-

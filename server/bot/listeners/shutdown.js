@@ -1,11 +1,11 @@
-module.exports = function (controller) {
+export default (controller) => {
   // For Cody <3
   controller.hears(['shutdown'], 'direct_message,direct_mention,mention',function(bot, message) {
     bot.startConversation(message, function (err, convo) {
       convo.ask('Are you sure you want me to shutdown?', [
         {
           pattern: bot.utterances.yes,
-          callback: function (response, convo) {
+          callback: (response, convo) => {
             convo.say('Bye!');
             convo.next();
             setTimeout(function () {
@@ -16,7 +16,7 @@ module.exports = function (controller) {
         {
           pattern: bot.utterances.no,
           default: true,
-          callback: function (response, convo) {
+          callback: (response, convo) => {
             convo.say('*Phew!*');
             convo.next();
           }

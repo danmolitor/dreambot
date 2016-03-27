@@ -1,49 +1,38 @@
-var path = require('path');
+import path from 'path';
+import authSetup from './utils/auth';
+import express from 'express';
+import http from 'http';
+import { listen } from 'rethinkdb-websocket-server';
 
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
-var r = require('rethinkdb');
+import webpack from 'webpack';
+import webpackMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
 
-var webpack = require('webpack');
-var webpackMiddleware = require('webpack-dev-middleware');
-var webpackHotMiddleware = require('webpack-hot-middleware');
+import config from '../webpack.config.js';
+import env from './utils/envDefaults';
 
-var config = require('../webpack.config.js');
-var connect = require('./utils/connect');
-var env = require('./utils/envDefaults');
-var apiRoutes = require('./api');
+const app = express();
+const server = http.createServer(app)
 
-require('./bot/bot.js');
-
-// TODO: move this into it's own module? placement depends on file structure?
-// Returns a promise
-function getChangeFeed() {
-  return connect()
-    .then(conn => r.table('messages').changes().run(conn));
-}
-
-getChangeFeed()
-  .then(cursor => {
-    cursor.each((err, change) => {
-      console.log('change detected!', change);
-      io.emit('test', change);
-    });
-  });
-
-io.on('connection', (socket) => {
-  console.log('a user connected');
+listen({
+  httpServer: server,
+  httpPath: '/db',
+  dbHost: env.rethinkHost,
+  dbPort: env.rethinkPort,
+  unsafelyAllowAnyQuery: true
 });
+
+import './bot/bot.js';
+
+authSetup(app);
 
 // Add routes to app here:
 // ex: app.use('/api', apiRoutes);
-app.use('/api', apiRoutes);
 
 // referenced https://github.com/christianalfoni/webpack-express-boilerplate
 if (env.isDev) {
-  var compiler = webpack(config);
-  var middleware = webpackMiddleware(compiler, {
+  const compiler = webpack(config);
+  const middleware = webpackMiddleware(compiler, {
     publicPath: config.output.publicPath,
     contentBase: 'src',
     stats: {
@@ -63,7 +52,7 @@ if (env.isDev) {
     res.end();
   });
 } else {
-  app.use(express.static(__dirname + '../dist'));
+  app.use('/assets', express.static('dist'));
 
   // This redirects any GET requests that aren't for '/' or our above-mentioned
   // routes to the home-page, letting the router on our SPA front-end handle it.

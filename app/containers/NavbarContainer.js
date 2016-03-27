@@ -1,38 +1,30 @@
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import React from 'react';
 import Navbar from '../components/Navbar';
+import _ from 'lodash';
 
-let NavbarContainer = React.createClass({
-  getAnalytics() {
-    let analytics = this.props.messages.reduce((acc, message) => {
-      acc.totalSentiment += message.score;
-      if (message.classification) {
-        acc.topics[message.classification] = acc.topics[message.classification]
-        ? acc.topics[message.classification] + 1
-        : 1;
-      }
-      return acc;
-    }, {totalSentiment: 0, topics: {}});
-  
-    let topThreeTopics = Object.keys(analytics.topics).sort( (a, b) => {
-      return analytics.topics[b] - analytics.topics[a];
-    }).slice(0,3).join(', ');
+const getAnalytics = (messages) => {
+  let analytics = messages.reduce((acc, message) => {
+    acc.totalSentiment += message.score;
+    return acc;
+  }, { totalSentiment: 0 });
 
-    analytics.topics = topThreeTopics;
-
-    return analytics;
-  },
-  render() {
-    const { messages } = this.props;
-    const analytics = this.getAnalytics();
-    return (
-      <Navbar messages={messages} analytics={analytics} />
-      )
-  }
-})
+  return analytics;
+};
 
 let mapStateToProps = (state) => {
-  return state;
-}
+  return {
+    messages: state.messages.messages,
+    analytics: Object.assign({}, getAnalytics(state.messages.messages), 
+    {
+      topics: Object.keys(state.wordCount).map(key => ({ [key]:state.wordCount[key] } ))
+      .sort((a, b) => b[Object.keys(b).join('')] - a[Object.keys(a).join('')])
+      .slice(0,3)
+      .map(pair => Object.keys(pair).join(''))
+    }),
+    users: state.engagement.slice().map(user => user.name).slice(0,3)
+  }
+};
 
-export default connect(mapStateToProps)(NavbarContainer)
+
+export default connect(mapStateToProps)(Navbar);

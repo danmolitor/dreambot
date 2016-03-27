@@ -1,17 +1,17 @@
-var os = require('os');
+import os from 'os';
 
-module.exports = function (controller) {
+export default (controller) => {
   controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'], 'direct_message,direct_mention,mention', function (bot, message) {
-    var hostname = os.hostname();
-    var uptime = formatUptime(process.uptime());
+    let hostname = os.hostname();
+    let uptime = formatUptime(process.uptime());
     bot.reply(message,
       `:robot_face: I am a bot named <@${bot.identity.name}>.
       I have been running for ${uptime} on ${hostname}.`
     );
   });
 
-  function formatUptime(uptime) {
-    var unit = 'second';
+  const formatUptime = (uptime) => {
+    let unit = 'second';
 
     if (uptime > 60) {
       uptime = uptime / 60;

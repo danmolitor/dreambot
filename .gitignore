@@ -1,14 +1,18 @@
+dist/
+build/
+
 # OS X
 .DS_Store
 
 # Env
 config.js
+.env
 
 # RethinkDb
 */dist/
 */rethinkdb_data/
 */server/bot/rethinkdb_data/
-*/data/classifier.json
+data/
 
 # Logs
 logs

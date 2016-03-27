@@ -1,13 +1,18 @@
 // From: https://github.com/reactjs/redux/blob/master/examples/real-world/containers/Root.dev.js
 
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import routes from '../config/routes';
 // import DevTools from './DevTools';
 import { Router } from 'react-router';
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 
-// TODO: Move to React.createClass ?
-class Root extends Component {
+const Root = React.createClass({
+  propTypes: {
+    store: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired
+  },
+
+  // TODO: Wrap Auth around this render function?
   render() {
     const { store, history } = this.props;
     return (
@@ -19,12 +24,6 @@ class Root extends Component {
       </Provider>
     );
   }
-}
-
-
-Root.propTypes = {
-  store: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
-};
+});
 
 export default Root;

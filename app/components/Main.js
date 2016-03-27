@@ -1,14 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router';
+import GlobalNotifications from '../containers/GlobalNotifications';
 
 const Main = React.createClass({
-  render: function () {
+  render() {
+    const NotificationsStyleMap = {
+      error: 'is-danger',
+      warning: 'is-warning',
+      info: 'is-info',
+      success: 'is-success',
+      primary: 'is-primary'
+    };
+
     return (
-        <div className='main-container'>
-          {this.props.children}
-        </div>
-      )
+      <div>
+        <GlobalNotifications styleMap={NotificationsStyleMap} />
+        {this.props.children}
+      </div>
+    );
   }
-})
+});
 
 export default Main;

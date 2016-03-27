@@ -1,11 +1,13 @@
-var r = require('rethinkdb');
-var env = require('./envDefaults');
+import r from 'rethinkdb';
+import env from './envDefaults';
 
 // TODO: pull connection info from env instead of hardcoding
-module.exports = function connect() {
+const connect = () => {
   return r.connect({
     host: env.rethinkHost,
     port: env.rethinkPort,
     db: env.rethinkDb
   });
 };
+
+export default connect;

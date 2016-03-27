@@ -1,19 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Messages from '../components/Messages';
-
-const MessagesContainer = React.createClass({
-  render: function() {
-    return (
-      <Messages messages={this.props.messages}/>
-    )
-  }
-})
+import { filterMessages } from '../actions/index';
 
 const mapStateToProps = (state) => {
-  return state;
+  return {
+    messages: state.messages.messages
+  }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    filterUserMessages(username){
+      dispatch(filterMessages(username))
+    }
+  }
 }
 
-const GetMessages = connect(mapStateToProps)(MessagesContainer);
+// const GetMessages = connect(mapStateToProps)(Messages);
 
-export default GetMessages;
+export default connect(mapStateToProps, mapDispatchToProps)(Messages);

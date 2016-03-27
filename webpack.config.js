@@ -9,13 +9,10 @@ var HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   inject: 'body'
 });
 
-/*
-  Should we use this or just have a `webpack.config.js` and a `webpack.production.config.js`?
-*/
-var env = process.env.NODE_ENV;
-
 var WebpackEnvPlugin = new webpack.DefinePlugin({
-  'process.env.NODE_ENV': JSON.stringify(env)
+  __DEV__: JSON.stringify(process.env.NODE_ENV || 'development'),
+  RETHINK_HOST: JSON.stringify(process.env.RETHINK_HOST),
+  PORT: JSON.stringify(process.env.PORT)
 });
 
 module.exports = {
@@ -27,11 +24,14 @@ module.exports = {
   output: {
     path: __dirname + '/dist',
     filename: 'index_bundle.js',
-    publicPath: '/'
+    publicPath: '/assets'
   },
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' }
+      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
+      { test: /\.css$/, loader: "style-loader!css-loader" },
+      { test: /\.png$/, loader: "url-loader?limit=100000" },
+      { test: /\.jpg$/, loader: "file-loader" }
     ]
   },
   plugins: [
